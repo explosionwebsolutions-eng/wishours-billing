@@ -44,7 +44,7 @@ app.get('/api/init', async (req, res) => {
 });
 
 // Sync Orders Endpoint
-app.post('/sync', async (req, res) => {
+app.post('/api/sync', async (req, res) => {
   const { orders } = req.body;
   if (!orders || !Array.isArray(orders)) {
     return res.status(400).json({ error: 'Invalid data' });

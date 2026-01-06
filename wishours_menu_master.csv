@@ -1,0 +1,51 @@
+category,item_name,variant,price_inr
+Shakes,Vanilla Shake,,65
+Shakes,Butterstoch Shake,,70
+Shakes,Blueberry Shake,,70
+Shakes,Straberry Shake,,70
+Shakes,Chocolate Shake,,80
+Shakes,Kitkat Shake,,90
+Shakes,Oreo Shake,,90
+Shakes,Brownie Shake,,100
+Shakes,Dark Chocolate Shake,,100
+Shakes,Banana Dry-fruit Shake,,120
+Shakes,Mango Dry-fruit Shake,,120
+Cold Coffee,Coffee,,50
+Cold Coffee,Cold Coffee,,80
+Cold Coffee,Ice Cream Cold Coffee (Vanilla/Chocolate),,100
+Mocktail,Fresh Lemon,,50
+Mocktail,Virgin Mojito,,60
+Mocktail,Mojito Mint,,60
+Mocktail,Mast Kala Khatta,,60
+Mocktail,Tangy Orange,,60
+Mocktail,Watermelon Mojito,,80
+Mocktail,Blue Lagoon,,80
+Mocktail,Black Currant,,80
+Mocktail,Masala Soda,,80
+Pasta,Red Sauce Pasta,,120
+Pasta,Pink Sauce Pasta,,130
+Pasta,White Sauce Pasta,,140
+Pasta,Baked in Cheese Pasta,,180
+Sandwich,Veggie Classic Sandwich,,80
+Sandwich,Mushroom and Corn,,110
+Sandwich,Veg and Cheese,,110
+Sandwich,Tandoori Paneer Tikka,,120
+Wrap,Aloo Tikki Wrap,,70
+Wrap,Veggie Classic Wrap,,80
+Wrap,Exotic Veg Wrap,,100
+Wrap,Paneer Wrap,,110
+Wrap,Paneer Cheese Wrap,,120
+French Fries,Classic Salted Fries,,60
+French Fries,Masala Fries,,70
+French Fries,Peri Peri Fries,,80
+French Fries,Chipotle Sauce Fries,,80
+French Fries,Thousand Island Sauce Fries,,80
+French Fries,Cheese Fries,,120
+Burger,Aloo Tikki Burger,,40
+Burger,Alook Tikki Supreme Burger,,50
+Burger,Veg Delight Burger,,55
+Burger,Veg in Cheese Burger,,65
+Burger,Paneer Peri Peri Spicy Burger,,80
+Burger,Tandoori Paneer Burger,,80
+Burger,Makhani Paneer Burger,,80
+Burger,Wishours Special Burger,,90

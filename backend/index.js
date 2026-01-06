@@ -7,7 +7,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Root route for testing
+// Root route
+app.get('/', (req, res) => {
+  res.send('Wishours Billing API Running');
+});
+
+// Health Check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });

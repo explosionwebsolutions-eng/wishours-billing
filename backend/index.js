@@ -83,7 +83,7 @@ app.post('/sync', async (req, res) => {
 });
 
 // Get Sales Report
-app.get('/sales/daily', async (req, res) => {
+app.get('/api/sales/daily', async (req, res) => {
   try {
     const today = new Date().toISOString().split('T')[0];
     const result = await pool.query('SELECT SUM(total) as total, COUNT(*) as count FROM orders WHERE date::text LIKE $1', [`${today}%`]);
@@ -97,3 +97,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+module.exports = app;

@@ -66,13 +66,9 @@ export const PrinterService = {
       let text = '';
 
       // Header
-      text += `\x1B\x61\x01`; // Center Align
-      text += `\x1B\x21\x30`; // Double Height/Width
-      text += `${storeDetails.name}\n`;
-      text += `\x1B\x21\x00`; // Normal
-      text += `${storeDetails.address}\n`;
-      text += `Tel: ${storeDetails.phone}\n`;
-      text += `\x1B\x61\x00`; // Left Align
+      text += `<C><B>${storeDetails.name}</B></C>\n`; 
+      text += `<C>${storeDetails.address}</C>\n`;
+      text += `<C>Tel: ${storeDetails.phone}</C>\n`;
       text += divider;
 
       // Order Info
@@ -94,16 +90,12 @@ export const PrinterService = {
       text += divider;
 
       // Totals
-      text += `\x1B\x61\x02`; // Right Align
-      text += `Subtotal: ${order.totals.subtotal.toFixed(2)}\n`;
-      text += `Tax: ${order.totals.tax.toFixed(2)}\n`;
-      text += `\x1B\x21\x10`; // Double Height
-      text += `TOTAL: ${order.totals.total.toFixed(2)}\n`;
-      text += `\x1B\x21\x00`; // Normal
-      text += `\x1B\x61\x01`; // Center
+      text += `<R>Subtotal: ${order.totals.subtotal.toFixed(2)}</R>\n`;
+      text += `<R>Tax: ${order.totals.tax.toFixed(2)}</R>\n`;
+      text += `<C><B>TOTAL: ${order.totals.total.toFixed(2)}</B></C>\n`;
       text += divider;
-      text += `Thank you for visiting!\n`;
-      text += `www.wishours.com\n\n\n`;
+      text += `<C>Thank you for visiting!</C>\n`;
+      text += `<C>www.wishours.com</C>\n\n\n`;
 
       await BLEPrinter.printBill(text);
 

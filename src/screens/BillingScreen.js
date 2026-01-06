@@ -32,12 +32,12 @@ export default function BillingScreen() {
   const [showPizza, setShowPizza] = React.useState(false);
   const [pizzaProduct, setPizzaProduct] = React.useState(null);
 
-  const handleCheckout = (paymentDetails) => {
+  const handleCheckout = async (paymentDetails) => {
     const newOrder = placeOrder(paymentDetails);
     setShowPayment(false);
     
     // Auto Print
-    PrinterService.printOrder(newOrder);
+    await PrinterService.printOrder(newOrder);
   };
 
   const onTapProduct = (p) => {

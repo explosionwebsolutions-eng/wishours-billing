@@ -60,7 +60,7 @@ export default function SettingsScreen() {
 
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         
-        <SectionTitle title="Device & Printer" />
+        <SectionTitle title="Devices & Printers" />
         <SettingItem 
           label="Thermal Printer" 
           value={connectedPrinter || "Not Connected"} 

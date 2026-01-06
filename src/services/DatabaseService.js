@@ -141,5 +141,62 @@ export const DatabaseService = {
     } catch (e) {
       return 0;
     }
+  },
+
+  syncWithCloud: async () => {
+    if (Platform.OS === 'web') return { count: 0, message: 'Web mode: Cloud sync skipped' };
+
+    try {
+      const database = await openDatabase();
+      
+      // 1. Get unsynced orders
+      const unsyncedOrders = await database.getAllAsync('SELECT * FROM orders WHERE synced = 0');
+      if (unsyncedOrders.length === 0) return { count: 0, message: 'All up to date' };
+
+      const payload = [];
+
+      // 2. Prepare Payload
+      for (const o of unsyncedOrders) {
+        const items = await database.getAllAsync('SELECT * FROM order_items WHERE order_id = ?', [o.id]);
+        payload.push({
+          id: o.id,
+          date: o.date,
+          status: o.status,
+          totals: {
+            total: o.total,
+            subtotal: o.subtotal,
+            tax: o.tax
+          },
+          payment: { tendered: o.payment_method === 'cash' ? o.total : 0 },
+          items: items.map(i => ({
+            name: i.product_name,
+            qty: i.quantity,
+            unitPrice: i.unit_price
+          }))
+        });
+      }
+
+      // 3. Send to Cloud API
+      const response = await fetch('https://wishours-billing.vercel.app/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orders: payload })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Cloud Sync Failed: ${response.statusText}`);
+      }
+
+      // 4. Mark as Synced in Local DB
+      for (const order of payload) {
+        await database.runAsync('UPDATE orders SET synced = 1 WHERE id = ?', [order.id]);
+      }
+
+      return { count: payload.length, message: `Successfully synced ${payload.length} orders` };
+
+    } catch (error) {
+      console.error('Sync Error:', error);
+      throw error;
+    }
   }
 };

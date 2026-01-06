@@ -8,6 +8,8 @@ import PizzaOptionsModal from '../components/PizzaOptionsModal';
 import { useStore } from '../state/store';
 import { theme } from '../theme/theme';
 
+import { PrinterService } from '../services/PrinterService';
+
 export default function BillingScreen() {
   const {
     categories,
@@ -31,10 +33,11 @@ export default function BillingScreen() {
   const [pizzaProduct, setPizzaProduct] = React.useState(null);
 
   const handleCheckout = (paymentDetails) => {
-    placeOrder(paymentDetails);
+    const newOrder = placeOrder(paymentDetails);
     setShowPayment(false);
-    // TODO: Trigger Thermal Print here
-    // alert('Order Placed Successfully!'); 
+    
+    // Auto Print
+    PrinterService.printOrder(newOrder);
   };
 
   const onTapProduct = (p) => {

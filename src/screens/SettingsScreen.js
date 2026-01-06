@@ -1,8 +1,54 @@
-import React from 'react';
-import { View, Text, SafeAreaView, StatusBar, TouchableOpacity, ScrollView, Switch } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, SafeAreaView, StatusBar, TouchableOpacity, ScrollView, Switch, Alert, ActivityIndicator, Modal, FlatList } from 'react-native';
 import { theme } from '../theme/theme';
+import { DatabaseService } from '../services/DatabaseService';
+import { PrinterService } from '../services/PrinterService';
 
 export default function SettingsScreen() {
+  const [syncing, setSyncing] = useState(false);
+  const [printerModal, setPrinterModal] = useState(false);
+  const [devices, setDevices] = useState([]);
+  const [scanning, setScanning] = useState(false);
+  const [connectedPrinter, setConnectedPrinter] = useState(null);
+
+  useEffect(() => {
+    PrinterService.init();
+  }, []);
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      const result = await DatabaseService.syncWithCloud();
+      Alert.alert("Sync Complete", result.message);
+    } catch (error) {
+      Alert.alert("Sync Failed", "Could not connect to server. Check internet.");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  const scanPrinters = async () => {
+    setPrinterModal(true);
+    setScanning(true);
+    try {
+      const list = await PrinterService.scan();
+      setDevices(list);
+    } finally {
+      setScanning(false);
+    }
+  };
+
+  const connectPrinter = async (device) => {
+    try {
+      await PrinterService.connect(device.inner_mac_address);
+      setConnectedPrinter(device.device_name);
+      setPrinterModal(false);
+      Alert.alert("Connected", `Printer ${device.device_name} ready.`);
+    } catch (e) {
+      Alert.alert("Error", "Could not connect to printer");
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <StatusBar barStyle="dark-content" backgroundColor={theme.colors.surface} />
@@ -15,7 +61,12 @@ export default function SettingsScreen() {
       <ScrollView contentContainerStyle={{ padding: 16 }}>
         
         <SectionTitle title="Device & Printer" />
-        <SettingItem label="Thermal Printer" value="Not Connected" action />
+        <SettingItem 
+          label="Thermal Printer" 
+          value={connectedPrinter || "Not Connected"} 
+          action 
+          onPress={scanPrinters}
+        />
         <SettingItem label="Paper Size" value="58mm" />
         <SettingItem label="Auto Print Receipt" isSwitch value={true} />
 
@@ -29,8 +80,23 @@ export default function SettingsScreen() {
         <SettingItem label="Last Sync" value="Pending..." />
         <SettingItem label="Cloud Backup" isSwitch value={true} />
         
-        <TouchableOpacity style={{ marginTop: 12, padding: 16, backgroundColor: theme.colors.primary, borderRadius: 12, alignItems: 'center', ...theme.shadows.md }}>
-           <Text style={{ color: '#FFF', fontWeight: '600' }}>🔄 Sync Data to Cloud</Text>
+        <TouchableOpacity 
+          onPress={handleSync}
+          disabled={syncing}
+          style={{ 
+            marginTop: 12, 
+            padding: 16, 
+            backgroundColor: syncing ? theme.colors.secondary : theme.colors.primary, 
+            borderRadius: 12, 
+            alignItems: 'center', 
+            ...theme.shadows.md 
+          }}
+        >
+          {syncing ? (
+             <ActivityIndicator color="#FFF" />
+          ) : (
+             <Text style={{ color: '#FFF', fontWeight: '600' }}>🔄 Sync Data to Cloud</Text>
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity style={{ marginTop: 24, padding: 16, backgroundColor: '#FFEBEE', borderRadius: 12, alignItems: 'center' }}>
@@ -42,6 +108,34 @@ export default function SettingsScreen() {
         </Text>
 
       </ScrollView>
+
+      {/* Printer Modal */}
+      <Modal visible={printerModal} animationType="slide" transparent>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: 24 }}>
+          <View style={{ backgroundColor: '#FFF', borderRadius: 16, padding: 16, maxHeight: '60%' }}>
+            <Text style={{ fontSize: 18, fontWeight: '700', marginBottom: 12 }}>Select Printer</Text>
+            {scanning && <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginBottom: 12 }} />}
+            <FlatList
+              data={devices}
+              keyExtractor={item => item.inner_mac_address}
+              renderItem={({ item }) => (
+                <TouchableOpacity 
+                  onPress={() => connectPrinter(item)}
+                  style={{ padding: 16, borderBottomWidth: 1, borderBottomColor: '#EEE' }}
+                >
+                  <Text style={{ fontWeight: '600' }}>{item.device_name}</Text>
+                  <Text style={{ color: '#888' }}>{item.inner_mac_address}</Text>
+                </TouchableOpacity>
+              )}
+              ListEmptyComponent={!scanning && <Text style={{ textAlign: 'center', color: '#888' }}>No devices found</Text>}
+            />
+            <TouchableOpacity onPress={() => setPrinterModal(false)} style={{ marginTop: 16, padding: 12, backgroundColor: '#EEE', borderRadius: 8, alignItems: 'center' }}>
+              <Text>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </SafeAreaView>
   );
 }
@@ -61,9 +155,9 @@ function SectionTitle({ title }) {
   );
 }
 
-function SettingItem({ label, value, action, isSwitch }) {
+function SettingItem({ label, value, action, isSwitch, onPress }) {
   return (
-    <TouchableOpacity disabled={isSwitch} style={{ 
+    <TouchableOpacity disabled={isSwitch} onPress={onPress} style={{ 
       backgroundColor: theme.colors.surface, 
       padding: 16, 
       borderRadius: 12, 

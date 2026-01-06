@@ -7,8 +7,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Root route for testing
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', time: new Date().toISOString() });
+});
+
 // Init Database Tables
-app.get('/init', async (req, res) => {
+app.get('/api/init', async (req, res) => {
   try {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS orders (

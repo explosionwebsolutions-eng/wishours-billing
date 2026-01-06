@@ -3,7 +3,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { theme } from '../theme/theme';
 
 export default function PizzaOptionsModal({ visible, product, matrix, addOns, onClose, onConfirm }) {
-  // Guard clause: if no product is selected, don't render anything
+  // Guard Clause: If product is null, render nothing
   if (!product) return null;
 
   const [flavor, setFlavor] = useState(product.id);
